@@ -18,6 +18,8 @@ node tests/players.js
   * Postgresql database:
     * exposed at port 15432
 * All application code is in `server.js`
+
+### Data
 * Seed data (i.e. initial data): see `database-seed.sql`
 
 ### Helper commands

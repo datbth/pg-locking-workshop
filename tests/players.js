@@ -27,8 +27,8 @@ async function main () {
   }
 
   const results = await Promise.all(promises)
-  console.log(`Successful results: ${results.filter(res => res.ok).length}`)
-  console.log(`Failed results: ${results.filter(res => !res.ok).length}`)
+  console.log(`Successful count: ${results.filter(res => res.ok).length}`)
+  console.log(`Failure count: ${results.filter(res => !res.ok).length}`)
 
   const [count_res, count_msg] = await forceFetch('http://localhost:18080/player_count?team_name=Real Madrid')
   console.log(count_msg)

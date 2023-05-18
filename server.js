@@ -23,6 +23,7 @@ app.post("/reset", async (req, res, next) => {
   try {
     await client.query('TRUNCATE players')
     await client.query('UPDATE teams SET player_count = 0')
+    await client.query("DELETE FROM teams WHERE name like 'RM%'")
     res.status(200)
     res.send('OK')
   } catch (e) {
