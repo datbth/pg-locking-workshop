@@ -62,8 +62,6 @@ app.get('/player_count', async (req, res, next) => {
 app.post("/players", async (req, res, next) => {
   const client = await pool.connect()
   try {
-    await client.query('BEGIN')
-
     /**
      * rows:
      *   [
@@ -86,12 +84,9 @@ app.post("/players", async (req, res, next) => {
       [team.player_count + 1, team.id]
     )
 
-    await client.query('COMMIT')
-
     res.status(200)
     res.send('OK')
   } catch (e) {
-    await client.query('ROLLBACK')
     next(e)
   } finally {
     client.release()
@@ -110,8 +105,6 @@ app.post("/players", async (req, res, next) => {
 app.post("/players_plus", async (req, res, next) => {
   const client = await pool.connect()
   try {
-    await client.query('BEGIN')
-
     const { rows: team_rows } = await client.query(
       'SELECT id, name, player_count FROM teams WHERE name = $1',
       [req.body.team_name],
@@ -135,12 +128,9 @@ app.post("/players_plus", async (req, res, next) => {
       [team.player_count + 1, team.id]
     )
 
-    await client.query('COMMIT')
-
     res.status(200)
     res.send('OK')
   } catch (e) {
-    await client.query('ROLLBACK')
     next(e)
   } finally {
     client.release()
