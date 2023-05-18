@@ -4,7 +4,7 @@
 CREATE TABLE teams
 (
   id SERIAL PRIMARY KEY,
-  name text UNIQUE NOT NULL,
+  name varchar(255) UNIQUE NOT NULL,
   player_count integer DEFAULT 0 NOT NULL
 );
 
@@ -16,6 +16,6 @@ INSERT INTO teams(name) VALUES
 CREATE TABLE players
 (
   id SERIAL PRIMARY KEY,
-  name text UNIQUE NOT NULL,
+  name varchar(255) UNIQUE NOT NULL,
   team_id integer NOT NULL
 );
