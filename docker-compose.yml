@@ -10,7 +10,7 @@ services:
       # so this ensures our database is loaded first
       - postgres
     ports:
-      - "8080:8080"
+      - "18080:8080"
     volumes:
       # Maps our current project directory `.` to
       # our working directory in the container
@@ -24,7 +24,7 @@ services:
   # to  `host: "postgres"` that value is mapped on the network to the 
   # address of this container.
   postgres:
-    image: postgres:14.1-alpine
+    image: postgres:11-alpine
     restart: always
     environment:
       # You can set the value of environment variables
@@ -36,7 +36,7 @@ services:
       - POSTGRES_DB=root
     ports:
       # Standard port for PostgreSQL databases
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       # When the PostgresSQL container is started it will run any scripts
       # provided in the `docker-entrypoint-initdb.d` directory, this connects
@@ -44,12 +44,12 @@ services:
       - ./database-seed.sql:/docker-entrypoint-initdb.d/database-seed.sql
 
   # PostgreSQL pgAdmin panel accessible at http://localhost:16543/
-  pgadmin-compose:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "placeholder@example.com"
-      PGADMIN_DEFAULT_PASSWORD: "fakepassword123!"
-    ports:
-      - "16543:80"
-    depends_on:
-      - postgres
+  # pgadmin-compose:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "placeholder@example.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "fakepassword123!"
+  #   ports:
+  #     - "16543:80"
+  #   depends_on:
+  #     - postgres

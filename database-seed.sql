@@ -1,12 +1,21 @@
-CREATE TABLE employees
+-- CREATE DATABASE h_locking;
+-- \c h_locking;
+
+CREATE TABLE teams
 (
-    id SERIAL,
-    name text,
-    title text,
-    CONSTRAINT employees_pkey PRIMARY KEY (id)
+  id SERIAL PRIMARY KEY,
+  name text UNIQUE NOT NULL,
+  player_count integer DEFAULT 0 NOT NULL
 );
 
-INSERT INTO employees(name, title) VALUES
- ('Meadow Crystalfreak ', 'Head of Operations'),
- ('Buddy-Ray Perceptor', 'DevRel'),
- ('Prince Flitterbell', 'Marketing Guru');
+INSERT INTO teams(name) VALUES
+  ('Manchester City'),
+  ('Chelsea'),
+  ('Real Madrid');
+
+CREATE TABLE players
+(
+  id SERIAL PRIMARY KEY,
+  name text UNIQUE NOT NULL,
+  team_id integer NOT NULL
+);
