@@ -63,12 +63,14 @@ app.get('/player_count', async (req, res, next) => {
 app.post("/players", async (req, res, next) => {
   const client = await pool.connect()
   try {
+    await client.query('BEGIN')
     /**
      * rows:
      *   [
      *     [id, name, player_count]
      *   ]
      */
+    console.log('fetching team...', req.body)
     const { rows: team_rows } = await client.query(
       'SELECT id, name, player_count FROM teams WHERE name = $1',
       [req.body.team_name],
@@ -76,18 +78,23 @@ app.post("/players", async (req, res, next) => {
     const team = team_rows[0]
     if (!team) throw new Error (`Team not found: ${req.body.team_name}`)
 
+    console.log('creating player...', req.body)
     await client.query(
       'INSERT INTO players (name, team_id) VALUES ($1, $2)',
       [req.body.name, team.id]
     )
+    console.log('updating player_count...', req.body)
     await client.query(
-      'UPDATE teams SET player_count = $1 WHERE id = $2',
-      [team.player_count + 1, team.id]
+      'UPDATE teams SET player_count = player_count + 1 WHERE id = $1',
+      [team.id]
     )
 
+    await client.query('COMMIT')
+    console.log('done', req.body)
     res.status(200)
     res.send('OK')
   } catch (e) {
+    await client.query('ROLLBACk')
     next(e)
   } finally {
     client.release()
