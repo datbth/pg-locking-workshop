@@ -9,13 +9,13 @@ async function forceFetch (url, options) {
 }
 
 async function main () {
-  await forceFetch('http://localhost:18080/reset', {
+  await forceFetch('http://pg-locking-workshop-app-1:8080/reset', {
     method: 'post',
   })
 
   const promises = [];
   for (let i = 0; i < 10; i++) {
-    let prom = fetch('http://localhost:18080/players', {
+    let prom = fetch('http://pg-locking-workshop-app-1:8080/players', {
       method: 'post',
       body: JSON.stringify({
         name: `Player ${i}`,
@@ -30,7 +30,7 @@ async function main () {
   console.log(`Successful count: ${results.filter(res => res.ok).length}`)
   console.log(`Failure count: ${results.filter(res => !res.ok).length}`)
 
-  const [count_res, count_msg] = await forceFetch('http://localhost:18080/player_count?team_name=Real Madrid')
+  const [count_res, count_msg] = await forceFetch('http://pg-locking-workshop-app-1:8080/player_count?team_name=Real Madrid')
   console.log(count_msg)
 }
 
