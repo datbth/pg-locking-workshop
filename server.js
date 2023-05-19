@@ -113,32 +113,31 @@ app.post("/players", async (req, res, next) => {
 app.post("/players_plus", async (req, res, next) => {
   const client = await pool.connect()
   try {
-    const { rows: team_rows } = await client.query(
-      'SELECT id, name, player_count FROM teams WHERE name = $1',
-      [req.body.team_name],
+    await client.query('BEGIN')
+    await client.query(
+      `
+        INSERT INTO teams (name, player_count) VALUES ($1, 1)
+        ON CONFLICT (name) DO UPDATE
+          SET player_count = teams.player_count + 1
+      `,
+      [req.body.team_name]
     )
-    let team = team_rows[0]
-    if (!team) {
-      const { rows: update_res } = await client.query(
-        'INSERT INTO teams (name) VALUES ($1) RETURNING id, name, player_count',
-        [req.body.team_name]
-      )
-      team = update_res[0]
-    }
-
 
     await client.query(
-      'INSERT INTO players (name, team_id) VALUES ($1, $2)',
-      [req.body.name, team.id]
-    )
-    await client.query(
-      'UPDATE teams SET player_count = $1 WHERE id = $2',
-      [team.player_count + 1, team.id]
+      `
+        INSERT INTO players (name, team_id)
+          SELECT $1, id
+          FROM teams t
+          WHERE t.name = $2
+      `,
+      [req.body.name, req.body.team_name]
     )
 
+    await client.query('COMMIT')
     res.status(200)
     res.send('OK')
   } catch (e) {
+    await client.query('ROLLBACK')
     next(e)
   } finally {
     client.release()
